@@ -11,7 +11,7 @@ void main() async {
   void testWithThenCatch() {
     songRepoMock.fetchSongById("s1")
         .then((song) {
-          print("success: ${song?.title}");
+          print("Song received ${song?.title}");
         })
         .catchError((error) {
           print(error);
@@ -19,7 +19,7 @@ void main() async {
 
     songRepoMock.fetchSongById("s6")
         .then((song) {
-          print("success: ${song?.title}");
+          print("Song received ${song?.title}");
         })
         .catchError((error) {
           print(error);
@@ -30,14 +30,14 @@ void main() async {
   void testWithAsyncAwait() async {
     try {
       final song = await songRepoMock.fetchSongById("s1");
-      print("success: ${song?.title}");
+      print("Song received ${song?.title}");
     } catch (error) {
       print(error);
     }
 
     try {
       final song = await songRepoMock.fetchSongById("s6");
-      print("success: ${song?.title}");
+      print("Song received ${song?.title}");
     } catch (error) {
       print(error);
     }
