@@ -43,6 +43,7 @@ class SongRepositoryMock implements SongRepository {
     await Future.delayed(Duration(seconds: 3), () {});
 
     if (shouldFail) {
+      shouldFail = !shouldFail;
       throw Exception("Error fetching songs from database");
     }
 
