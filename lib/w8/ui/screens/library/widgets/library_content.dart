@@ -32,7 +32,9 @@ class LibraryContent extends StatelessWidget {
                 ),
               ),
 
-              loading: () => const SizedBox(),
+              loading: () => const Center(
+                child: CircularProgressIndicator(),
+              ),
               error: (error, _) => const SizedBox(),
             ),
           ),
