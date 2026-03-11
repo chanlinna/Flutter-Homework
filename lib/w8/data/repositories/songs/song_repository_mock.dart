@@ -37,10 +37,17 @@ class SongRepositoryMock implements SongRepository {
     ),
   ];
 
+  bool shouldFail = false;
   @override
   Future<List<Song>> fetchSongs() async {
-    await Future.delayed(Duration(minutes: 2), () {});
- 
+    await Future.delayed(Duration(seconds: 3), () {});
+
+    if (shouldFail) {
+      throw Exception("Error fetching songs from database");
+    }
+
+    shouldFail = !shouldFail;
+
     return _songs;
   }
 
