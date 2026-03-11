@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../data/repositories/songs/song_repository.dart';
 import '../../../states/player_state.dart';
 import '../../../../model/songs/song.dart';
@@ -6,7 +7,7 @@ import '../../../../model/songs/song.dart';
 class LibraryViewModel extends ChangeNotifier {
   final SongRepository songRepository;
   final PlayerState playerState;
-  List<Song>? _songs;
+  AsyncValue<List<Song>> _songs = const AsyncValue.loading();
 
   LibraryViewModel({required this.songRepository, required this.playerState}) {
     playerState.addListener(notifyListeners);
@@ -15,7 +16,7 @@ class LibraryViewModel extends ChangeNotifier {
     _init();
   }
 
-  List<Song> get songs => _songs == null ? [] : _songs!;
+  AsyncValue<List<Song>> get songs => _songs;
 
   @override
   void dispose() {
