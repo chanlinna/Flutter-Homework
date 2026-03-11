@@ -25,10 +25,14 @@ class LibraryViewModel extends ChangeNotifier {
   }
 
   void _init() async {
+    _songs = const AsyncValue.loading();
+    notifyListeners();
+    
     // 1 - Fetch songs
-    _songs = await songRepository.fetchSongs();
+    final result = await songRepository.fetchSongs();
 
     // 2 - notify listeners
+    _songs = AsyncValue.data(result);
     notifyListeners();
   }
 
