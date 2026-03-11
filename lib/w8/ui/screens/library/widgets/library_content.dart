@@ -35,7 +35,12 @@ class LibraryContent extends StatelessWidget {
               loading: () => const Center(
                 child: CircularProgressIndicator(),
               ),
-              error: (error, _) => const SizedBox(),
+              error: (error, _) => Center(
+                child: Text(
+                  "Error loading songs",
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
             ),
           ),
         ],
