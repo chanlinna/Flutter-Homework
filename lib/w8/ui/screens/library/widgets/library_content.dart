@@ -22,15 +22,18 @@ class LibraryContent extends StatelessWidget {
           SizedBox(height: 50),
       
           Expanded(
-            child: ListView.builder(
-              itemCount: mv.songs.length,
-              itemBuilder: (context, index) => SongTile(
-                song: mv.songs[index],
-                isPlaying: mv.isSongPlaying(mv.songs[index]) ,
-                onTap: () {
-                  mv.start(mv.songs[index]);
-                },
+            child: mv.songs.when(
+              data: (songs) => ListView.builder(
+                itemCount: songs.length,
+                itemBuilder: (context, index) => SongTile(
+                  song: songs[index],
+                  isPlaying: mv.isSongPlaying(songs[index]),
+                  onTap: () => mv.start(songs[index]),
+                ),
               ),
+
+              loading: () => const SizedBox(),
+              error: (error, _) => const SizedBox(),
             ),
           ),
         ],
