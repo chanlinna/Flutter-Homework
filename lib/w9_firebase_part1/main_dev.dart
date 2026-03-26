@@ -1,3 +1,5 @@
+import 'package:flutter_homework/w9_firebase_part1/data/repositories/artists/artist_repository.dart';
+import 'package:flutter_homework/w9_firebase_part1/data/repositories/artists/artist_repository_firebase.dart';
 import 'package:provider/provider.dart';
  
 import 'data/repositories/songs/song_repository_firebase.dart';
@@ -23,6 +25,8 @@ List<InheritedProvider> get devProviders {
     ChangeNotifierProvider<AppSettingsState>(
       create: (_) => AppSettingsState(repository: appSettingsRepository),
     ),
+
+    Provider<ArtistRepository>(create: (_) => ArtistRepositoryFirebase()),
   ];
 }
 
