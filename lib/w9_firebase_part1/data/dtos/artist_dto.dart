@@ -2,7 +2,7 @@ import 'package:flutter_homework/w9_firebase_part1/model/artists/artist.dart';
 
 class ArtistDto {
   static const String nameKey = 'name';
-  static const String genreKey = 'genreKey';
+  static const String genreKey = 'genre';
   static const String imageUrlKey = 'imageUrl';
 
   static Artist fromJson(String id, Map<String, dynamic> json) {
