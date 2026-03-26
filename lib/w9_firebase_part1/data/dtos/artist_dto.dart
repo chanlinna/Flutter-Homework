@@ -1,0 +1,28 @@
+import 'package:flutter_homework/w9_firebase_part1/model/artists/artist.dart';
+
+class ArtistDto {
+  static const String nameKey = 'name';
+  static const String genreKey = 'genreKey';
+  static const String imageUrlKey = 'imageUrl';
+
+  static Artist fromJson(String id, Map<String, dynamic> json) {
+    assert(json[nameKey] is String);
+    assert(json[genreKey] is String);
+    assert(json[imageUrlKey] is String);
+
+    return Artist(
+      id: id,
+      name: json[nameKey],
+      genre: json[genreKey],
+      imageUrl: Uri.parse(json[imageUrlKey]),
+    );
+  }
+
+  Map<String, dynamic> toJson(Artist artist) {
+    return {
+      nameKey: artist.name,
+      genreKey: artist.genre,
+      imageUrlKey: artist.imageUrl,
+    };
+  }
+}
