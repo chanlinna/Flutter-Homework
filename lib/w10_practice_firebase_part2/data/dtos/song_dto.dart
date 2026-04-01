@@ -31,7 +31,7 @@ class SongDto {
       artistIdKey: song.artistId,
       durationKey: song.duration.inMilliseconds,
       imageUrlKey: song.imageUrl.toString(),
-      likesKey: song.likes
+      likesKey: song.likes.toString()
     };
   }
 }
