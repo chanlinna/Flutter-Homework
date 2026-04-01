@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter_homework/w10_practice_firebase_part2/config/firebase_config.dart';
 import 'package:http/http.dart' as http;
  
 import '../../../model/artist/artist.dart';
@@ -7,10 +8,7 @@ import '../../dtos/artist_dto.dart';
 import 'artist_repository.dart';
 
 class ArtistRepositoryFirebase implements ArtistRepository {
-  final Uri artistsUri = Uri.https(
-    'w9-firebase1-default-rtdb.asia-southeast1.firebasedatabase.app',
-    '/artists.json',
-  );
+  final Uri artistsUri = FirebaseConfig.baseUri.replace(path: '/artists.json');
 
   @override
   Future<List<Artist>> fetchArtists() async {
