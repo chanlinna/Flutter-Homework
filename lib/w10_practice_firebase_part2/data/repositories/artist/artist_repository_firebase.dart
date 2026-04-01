@@ -9,6 +9,7 @@ import 'artist_repository.dart';
 
 class ArtistRepositoryFirebase implements ArtistRepository {
   final Uri artistsUri = FirebaseConfig.baseUri.replace(path: '/artists.json');
+  List<Artist>? _cachedArtists;
 
   @override
   Future<List<Artist>> fetchArtists() async {
@@ -31,4 +32,16 @@ class ArtistRepositoryFirebase implements ArtistRepository {
 
   @override
   Future<Artist?> fetchArtistById(String id) async {}
+
+  @override
+  Future<List<Artist>> getArtists({bool forceFetch = false}) async {
+    if (!forceFetch && _cachedArtists != null) {
+      return  _cachedArtists!;
+    }
+
+    final List<Artist> artists = await fetchArtists();
+     _cachedArtists = artists;
+
+    return artists;
+  }
 }

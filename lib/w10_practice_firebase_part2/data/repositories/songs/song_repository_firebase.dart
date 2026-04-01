@@ -9,6 +9,7 @@ import 'song_repository.dart';
 
 class SongRepositoryFirebase extends SongRepository {
   final Uri songsUri = FirebaseConfig.baseUri.replace(path: '/songs.json');
+  List<Song>? _cachedSongs;
 
   @override
   Future<List<Song>> fetchSongs() async {
@@ -27,6 +28,23 @@ class SongRepositoryFirebase extends SongRepository {
       // 2- Throw expcetion if any issue
       throw Exception('Failed to load posts');
     }
+  }
+
+  @override
+  Future<List<Song>> getSongs({bool forceFetch = false}) async {
+    if (_cachedSongs != null && !forceFetch) {
+      return _cachedSongs!;
+    }
+
+    final songs = await fetchSongs();
+
+    _cachedSongs = songs;
+
+    return songs;
+  }
+
+  void clearCache() {
+    _cachedSongs = null;
   }
 
   @override
