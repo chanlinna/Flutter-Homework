@@ -17,6 +17,6 @@ class Song {
 
   @override
   String toString() {
-    return 'Song(id: $id, title: $title, artist id: $artistId, duration: $duration)';
+    return 'Song(id: $id, title: $title, artist id: $artistId, duration: $duration, likes: $likes)';
   }
 }
