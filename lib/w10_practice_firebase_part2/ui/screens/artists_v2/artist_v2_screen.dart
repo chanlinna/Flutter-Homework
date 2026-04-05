@@ -16,7 +16,7 @@ class ArtistV2Screen extends StatelessWidget {
       create: (context) =>
           ArtistViewModel(repository: context.read<ArtistRepository>())
             ..fetchData(artistId),
-      child: ArtistV2Content(artistId: artistId),
+      child: Scaffold(body: ArtistV2Content(artistId: artistId)),
     );
   }
 }

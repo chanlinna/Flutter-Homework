@@ -16,6 +16,7 @@ class ArtistRepositoryFirebase implements ArtistRepository {
   final Uri commentsUri = FirebaseConfig.baseUri.replace(
     path: '/comments.json',
   );
+  final Uri songsUri = FirebaseConfig.baseUri.replace(path: '/songs.json');
   List<Artist>? _cachedArtists;
 
   @override
@@ -38,7 +39,20 @@ class ArtistRepositoryFirebase implements ArtistRepository {
   }
 
   @override
-  Future<Artist?> fetchArtistById(String id) async {}
+  Future<Artist?> fetchArtistById(String artistId) async {
+    final Uri artistUri = FirebaseConfig.baseUri.replace(
+      path: '/artists/$artistId.json',
+    );
+    final http.Response response = await http.get(artistUri);
+    if (response.statusCode == 200) {
+      final decoded = json.decode(response.body);
+      if (decoded == null) return null;
+
+      return ArtistDto.fromJson(artistId, decoded);
+    } else {
+      throw Exception('failed to fetch artist with id $artistId');
+    }
+  }
 
   @override
   Future<List<Artist>> getArtists({bool forceFetch = false}) async {
@@ -54,17 +68,25 @@ class ArtistRepositoryFirebase implements ArtistRepository {
 
   @override
   Future<List<Song>> fetchSongArtist(String artistId) async {
-    final response = await http.get(artistsUri);
+    final response = await http.get(songsUri);
 
-    if (response.statusCode == 200 && response.body != "null") {
-      final Map<String, dynamic> songsJson = json.decode(response.body);
+    if (response.statusCode == 200) {
+      final decoded = json.decode(response.body);
+      if (decoded == null) return [];
 
-      return songsJson.entries
-          .where((entry) => entry.value['artistId'] == artistId)
-          .map((entry) => SongDto.fromJson(entry.key, entry.value))
-          .toList();
+      Map<String, dynamic> songData = decoded;
+      List<Song> result = [];
+
+      for (final entry in songData.entries) {
+        final song = SongDto.fromJson(entry.key, entry.value);
+        if (song.artistId == artistId) {
+          result.add(song);
+        }
+      }
+
+      return result;
     } else {
-      throw Exception('Failed to load songs of artist $artistId');
+      throw Exception('Failed to fetch song(s) of $artistId');
     }
   }
 
@@ -72,14 +94,23 @@ class ArtistRepositoryFirebase implements ArtistRepository {
   Future<List<Comment>> fetchArtistComments(String artistId) async {
     final response = await http.get(commentsUri);
 
-    if (response.statusCode == 200 && response.body != "null") {
-      final Map<String, dynamic> commentsJson = json.decode(response.body);
-      return commentsJson.entries
-          .where((entry) => entry.value['artistId'] == artistId)
-          .map((entry) => CommentDto.fromJson(entry.key, entry.value))
-          .toList();
+    if (response.statusCode == 200) {
+      final decoded = json.decode(response.body);
+      if (decoded == null) return [];
+
+      Map<String, dynamic> commentData = decoded;
+      List<Comment> result = [];
+
+      for (final entry in commentData.entries) {
+        final comment = CommentDto.fromJson(entry.key, entry.value);
+        if (comment.artistId == artistId) {
+          result.add(comment);
+        }
+      }
+
+      return result;
     } else {
-      throw Exception('Failed to load comments of artist $artistId');
+      throw Exception('Failed to fetch comment(s) of $artistId');
     }
   }
 

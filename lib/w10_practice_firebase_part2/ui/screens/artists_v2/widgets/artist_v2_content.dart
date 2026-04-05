@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_homework/w10_practice_firebase_part2/model/songs/song.dart';
 import 'package:flutter_homework/w10_practice_firebase_part2/ui/screens/artists_v2/view_model/artist_v2_view_model.dart';
+import 'package:flutter_homework/w10_practice_firebase_part2/ui/screens/artists_v2/widgets/comment_form.dart';
+import 'package:flutter_homework/w10_practice_firebase_part2/ui/screens/library/view_model/library_item_data.dart';
+import 'package:flutter_homework/w10_practice_firebase_part2/ui/screens/library/widgets/library_item_tile.dart';
 import 'package:provider/provider.dart';
+
 import '../../../../model/comment/comment.dart';
 import '../../../theme/theme.dart';
 import '../../../utils/async_value.dart';
@@ -15,89 +18,61 @@ class ArtistV2Content extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<ArtistViewModel>();
+    final state = vm.state;
 
-    Widget songsContent;
-    switch (vm.songsValue.state) {
-      case AsyncValueState.loading:
-        songsContent = const Center(child: CircularProgressIndicator());
-        break;
-
-      case AsyncValueState.error:
-        songsContent = Center(
-          child: Text(
-            'error = ${vm.songsValue.error!}',
-            style: const TextStyle(color: Colors.red),
-          ),
-        );
-        break;
-
-      case AsyncValueState.success:
-        final List<Song> songs = vm.songsValue.data!;
-
-        songsContent = Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Songs", style: AppTextStyles.body),
-            const SizedBox(height: 10),
-
-            if (songs.isEmpty)
-              const Text("No songs available")
-            else
-              Expanded(
-                child: ListView.builder(
-                  itemCount: songs.length,
-                  itemBuilder: (context, index) {
-                    final song = songs[index];
-                    return ListTile(
-                      leading: const Icon(Icons.music_note),
-                      title: Text(song.title),
-                      subtitle: Text("${song.duration.inMinutes} min"),
-                    );
-                  },
-                ),
-              ),
-          ],
-        );
+    if (state.state == AsyncValueState.loading) {
+      return const Center(child: CircularProgressIndicator());
     }
 
-    Widget commentsContent;
-    switch (vm.commentsValue.state) {
-      case AsyncValueState.loading:
-        commentsContent = const Center(child: CircularProgressIndicator());
-        break;
-
-      case AsyncValueState.error:
-        commentsContent = Center(
-          child: Text(
-            'error = ${vm.commentsValue.error!}',
-            style: const TextStyle(color: Colors.red),
-          ),
-        );
-        break;
-
-      case AsyncValueState.success:
-        final List<Comment> comments = vm.commentsValue.data!;
-
-        commentsContent = Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Comments", style: AppTextStyles.body),
-            const SizedBox(height: 10),
-
-            if (comments.isEmpty)
-              const Text("No comments yet")
-            else
-              Expanded(
-                child: ListView.builder(
-                  itemCount: comments.length,
-                  itemBuilder: (context, index) {
-                    return CommentTile(comment: comments[index]);
-                  },
-                ),
-              ),
-          ],
-        );
+    if (state.state == AsyncValueState.error) {
+      return Center(
+        child: Text(
+          'error = ${state.error}',
+          style: const TextStyle(color: Colors.red),
+        ),
+      );
     }
+
+    final data = state.data!;
+
+    final songsContent = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("Songs", style: AppTextStyles.body),
+        const SizedBox(height: 10),
+
+        if (data.songs.isEmpty)
+          const Text("No songs available")
+        else
+          Column(
+            children: data.songs.map((song) {
+              return LibraryItemTile(
+                data: LibraryItemData(song: song, artist: data.artist),
+                isPlaying: false,
+                onTap: () {},
+                onLike: () {},
+              );
+            }).toList(),
+          ),
+      ],
+    );
+
+    final commentsContent = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("Comments", style: AppTextStyles.body),
+        const SizedBox(height: 10),
+
+        if (data.comments.isEmpty)
+          const Text("No comments yet")
+        else
+          Column(
+            children: data.comments
+                .map((Comment comment) => CommentTile(comment: comment))
+                .toList(),
+          ),
+      ],
+    );
 
     return Padding(
       padding: const EdgeInsets.all(20.0),
@@ -117,6 +92,7 @@ class ArtistV2Content extends StatelessWidget {
               ],
             ),
           ),
+          CommentForm(artistId: data.artist.id),
         ],
       ),
     );
